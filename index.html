@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <title>F&B Product Studio — Trình chỉnh ảnh sản phẩm</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">F<span>•</span>B</div><div class="brand-copy"><strong>PRODUCT STUDIO</strong><small>Creative workspace <span class="version">v0.1</span></small></div></div>
+      <span class="topbar-divider"></span>
+      <div class="project-title"><span class="dot"></span><span id="projectName" contenteditable="true" spellcheck="false" title="Nhấp để đổi tên dự án">Dự án sản phẩm mới</span><small>Local workspace</small></div>
+      <div class="top-actions">
+        <button class="btn subtle" id="btnUndo" title="Hoàn tác • Ctrl+Z">↶ <span>Undo</span></button>
+        <button class="btn subtle" id="btnRedo" title="Làm lại • Ctrl+Y">↷ <span>Redo</span></button>
+        <button class="btn secondary" id="btnSave">♧ <span>Lưu dự án</span></button>
+        <button class="btn primary" id="btnExport">↥ <span>Xuất ảnh</span></button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="panel left-panel">
+        <div class="panel-heading"><span class="eyebrow">BỘ CÔNG CỤ</span><h2>Studio của bạn</h2><p>Chỉnh ảnh sản phẩm với layer không phá hủy bản gốc.</p></div>
+        <div class="section-label">NGUỒN ẢNH</div>
+        <button class="tool-card" id="btnAddPhoto"><span class="tool-icon purple">▧</span><span><strong>Thêm ảnh sản phẩm</strong><small>JPG, PNG, WebP</small></span><span class="chevron">＋</span></button>
+        <button class="tool-card" id="btnAddBackground"><span class="tool-icon blue">▣</span><span><strong>Tải nền tham chiếu</strong><small>Dùng nền ảnh riêng</small></span><span class="chevron">＋</span></button>
+        <button class="tool-card" id="btnDemo"><span class="tool-icon sand">◉</span><span><strong>Thử ảnh bình giữ nhiệt</strong><small>Mẫu bạn đã gửi</small></span><span class="chevron">↗</span></button>
+        <div class="section-label push">NỀN STUDIO</div>
+        <div class="preset-grid" id="presetGrid"></div>
+        <div class="section-label push">AI TOOLS <span class="pill status" id="aiStatus">Chưa kết nối</span></div>
+        <button class="tool-card ai-tool" id="btnRemoveBg"><span class="tool-icon mint">✦</span><span><strong>Tách nền tự động</strong><small>AI local • rembg</small></span><span class="chevron">→</span></button>
+        <div class="hint">Tách nền AI cần khởi chạy dịch vụ Python trong thư mục <code>backend</code>. Chỉnh màu, ghép nền và xuất ảnh hoạt động offline.</div>
+        <div class="section-label push">THÀNH PHẦN</div>
+        <button class="tool-card" id="btnAddText"><span class="tool-icon coral">T</span><span><strong>Thêm nội dung chữ</strong><small>Tiêu đề, thông điệp</small></span><span class="chevron">＋</span></button>
+        <input id="photoInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden />
+        <input id="bgInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+        <input id="openProjectInput" type="file" accept="application/json,.json" hidden />
+        <button class="text-link" id="btnOpenProject">↧ Mở dự án JSON đã lưu</button>
+      </aside>
+
+      <main class="center-panel">
+        <div class="canvas-topbar">
+          <div class="canvas-meta"><span class="live-dot"></span> CANVAS <strong id="canvasDimensions">1080 × 1350 px</strong><span class="divider-dot">•</span><span id="canvasFormat">4:5</span></div>
+          <div class="canvas-toolbar"><button id="btnCompare" class="chip" title="Tạm ẩn bộ lọc">◐ So sánh gốc</button><button id="btnFit" class="chip" title="Vừa màn hình">⊞ Vừa màn hình</button><button id="btnZoomOut" class="icon-btn">−</button><span id="zoomText">100%</span><button id="btnZoomIn" class="icon-btn">+</button></div>
+        </div>
+        <div class="stage-wrap" id="stageWrap">
+          <div class="stage-inner" id="stageInner">
+            <canvas id="artboard" width="1080" height="1350"></canvas>
+            <canvas id="overlay" width="1080" height="1350" aria-label="Vùng chỉnh sửa tương tác"></canvas>
+          </div>
+          <div class="stage-empty" id="emptyState"><div class="empty-icon">✧</div><h2>Studio đã sẵn sàng</h2><p>Thêm ảnh, chọn nền studio, kéo thả sản phẩm và tinh chỉnh ánh sáng.</p><button class="btn primary" id="btnEmptyAdd">＋ Bắt đầu với một ảnh</button><small>Hoặc kéo ảnh từ máy tính vào đây</small></div>
+        </div>
+        <div class="bottom-bar"><span>ⓘ Ảnh gốc được giữ nguyên. Kéo ảnh để di chuyển, kéo chấm góc để đổi kích thước.</span><span id="statusText">Sẵn sàng</span></div>
+      </main>
+
+      <aside class="panel right-panel">
+        <div class="right-header"><div><span class="eyebrow">THUỘC TÍNH</span><h2>Điều chỉnh</h2></div><button id="btnResetAdjust" title="Đặt lại bộ lọc" class="btn subtle mini">↻ Đặt lại</button></div>
+        <div class="property-scroll">
+          <div class="property-group"><div class="row-between"><h3>Kích thước thiết kế</h3><small>px</small></div><select id="sizePreset" class="select"><option value="1080x1350">Social post • 4:5 (1080×1350)</option><option value="1080x1920">Story • 9:16 (1080×1920)</option><option value="1920x1080">TV ngang • 16:9 (1920×1080)</option><option value="1080x1080">Vuông • 1:1 (1080×1080)</option><option value="2160x3840">4K dọc • 9:16 (2160×3840)</option><option value="3840x2160">4K ngang • 16:9 (3840×2160)</option><option value="2480x3508">A4 • 300dpi (2480×3508)</option></select></div>
+          <div class="property-group"><div class="row-between"><h3>Layer đang chọn</h3><button class="micro" id="btnDuplicate">⧉ Nhân bản</button></div><div id="noSelection" class="no-selection">Chọn sản phẩm hoặc chữ trên canvas để chỉnh sửa.</div><div id="selectedInfo" class="selection-title hidden"></div></div>
+          <div id="imageControls" class="hidden">
+            <div class="property-group"><div class="row-between"><h3>Ánh sáng & màu</h3><small>Ảnh riêng từng layer</small></div><div id="sliders"></div></div>
+            <div class="property-group"><div class="row-between"><h3>Độ sâu & bố cục</h3></div><label class="control-label">Kích thước <output id="scaleValue">100%</output></label><input id="scaleRange" type="range" min="10" max="220" value="100" /><label class="control-label">Xoay <output id="rotateValue">0°</output></label><input id="rotateRange" type="range" min="-180" max="180" value="0" /><label class="toggle-row"><input type="checkbox" id="shadowToggle" checked /> Bóng đổ mềm dưới sản phẩm</label></div>
+          </div>
+          <div id="textControls" class="hidden"><div class="property-group"><h3>Chỉnh chữ</h3><label class="field-label" for="textContent">Nội dung</label><textarea id="textContent" rows="3"></textarea><label class="field-label" for="textColor">Màu chữ</label><input id="textColor" type="color" value="#ffffff" /><label class="field-label" for="textSize">Cỡ chữ</label><input id="textSize" type="range" min="20" max="240" value="64" /></div></div>
+          <div class="property-group"><div class="row-between"><h3>Thứ tự layer</h3><small id="layerCount">0 đối tượng</small></div><div class="layers-list" id="layerList"><div class="empty-layers">Chưa có layer</div></div><div class="layer-actions"><button class="btn small secondary" id="btnLayerUp">↑ Lên trên</button><button class="btn small secondary" id="btnLayerDown">↓ Xuống dưới</button><button class="btn small danger" id="btnDeleteLayer">⌫ Xóa</button></div></div>
+          <div class="property-group"><h3>Xuất thành phẩm</h3><select id="exportFormat" class="select"><option value="png">PNG • chất lượng cao</option><option value="jpeg">JPG • chia sẻ</option><option value="webp">WebP • website</option></select><button class="btn primary export-full" id="btnExportAside">↥ Xuất ảnh theo canvas</button><p class="help">Dữ liệu layer lưu dưới dạng .json để tiếp tục chỉnh sửa.</p></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
