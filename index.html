@@ -10,7 +10,7 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="brand"><div class="brand-mark">F<span>•</span>B</div><div class="brand-copy"><strong>PRODUCT STUDIO</strong><small>Creative workspace <span class="version">v0.1</span></small></div></div>
+      <div class="brand"><div class="brand-mark">F<span>•</span>B</div><div class="brand-copy"><strong>PRODUCT STUDIO</strong><small>Creative workspace <span class="version">v0.2</span></small></div></div>
       <span class="topbar-divider"></span>
       <div class="project-title"><span class="dot"></span><span id="projectName" contenteditable="true" spellcheck="false" title="Nhấp để đổi tên dự án">Dự án sản phẩm mới</span><small>Local workspace</small></div>
       <div class="top-actions">
@@ -30,6 +30,26 @@
         <button class="tool-card" id="btnDemo"><span class="tool-icon sand">◉</span><span><strong>Thử ảnh bình giữ nhiệt</strong><small>Mẫu bạn đã gửi</small></span><span class="chevron">↗</span></button>
         <div class="section-label push">NỀN STUDIO</div>
         <div class="preset-grid" id="presetGrid"></div>
+        <div class="section-label push">PALETTE ENGINE <span class="pill" id="paletteSourceBadge">Sẵn sàng</span></div>
+        <div class="palette-box">
+          <div class="palette-tabs" role="tablist" aria-label="Chế độ bảng màu">
+            <button class="palette-tab active" id="tabPalettePhoto" type="button" role="tab" aria-selected="true">Từ ảnh</button>
+            <button class="palette-tab" id="tabPaletteMood" type="button" role="tab" aria-selected="false">Mood F&amp;B</button>
+          </div>
+          <div id="palettePhotoPane">
+            <div class="palette-actions-row">
+              <button class="btn secondary mini palette-scan-btn" id="btnExtractPalette" type="button">✦ Lấy màu sản phẩm</button>
+              <input id="paletteBasePicker" class="palette-base-picker" type="color" value="#d2a679" title="Chỉnh màu gốc sinh nền" aria-label="Màu gốc sinh nền" />
+            </div>
+            <div class="swatch-strip" id="extractedSwatches">
+              <div class="swatch-empty">Thêm ảnh rồi bấm <strong>Lấy màu sản phẩm</strong> để gợi ý nền.</div>
+            </div>
+            <div class="generated-grid" id="generatedBackdrops"></div>
+          </div>
+          <div id="paletteMoodPane" class="hidden">
+            <div class="mood-grid" id="moodGrid"></div>
+          </div>
+        </div>
         <div class="section-label push">AI TOOLS <span class="pill status" id="aiStatus">Chưa kết nối</span></div>
         <button class="tool-card ai-tool" id="btnRemoveBg"><span class="tool-icon mint">✦</span><span><strong>Tách nền tự động</strong><small>AI local • rembg</small></span><span class="chevron">→</span></button>
         <div class="hint">Tách nền AI cần khởi chạy dịch vụ Python trong thư mục <code>backend</code>. Chỉnh màu, ghép nền và xuất ảnh hoạt động offline.</div>
@@ -65,7 +85,7 @@
             <div class="property-group"><div class="row-between"><h3>Ánh sáng & màu</h3><small>Ảnh riêng từng layer</small></div><div id="sliders"></div></div>
             <div class="property-group"><div class="row-between"><h3>Độ sâu & bố cục</h3></div><label class="control-label">Kích thước <output id="scaleValue">100%</output></label><input id="scaleRange" type="range" min="10" max="220" value="100" /><label class="control-label">Xoay <output id="rotateValue">0°</output></label><input id="rotateRange" type="range" min="-180" max="180" value="0" /><label class="toggle-row"><input type="checkbox" id="shadowToggle" checked /> Bóng đổ mềm dưới sản phẩm</label></div>
           </div>
-          <div id="textControls" class="hidden"><div class="property-group"><h3>Chỉnh chữ</h3><label class="field-label" for="textContent">Nội dung</label><textarea id="textContent" rows="3"></textarea><label class="field-label" for="textColor">Màu chữ</label><input id="textColor" type="color" value="#ffffff" /><label class="field-label" for="textSize">Cỡ chữ</label><input id="textSize" type="range" min="20" max="240" value="64" /></div></div>
+          <div id="textControls" class="hidden"><div class="property-group"><h3>Chỉnh chữ</h3><label class="field-label" for="textContent">Nội dung</label><textarea id="textContent" rows="3"></textarea><label class="field-label" for="textColor">Màu chữ</label><input id="textColor" type="color" value="#ffffff" /><div class="contrast-box"><div class="row-between"><span class="field-label inline">Tương phản với nền</span><span class="contrast-badge" id="textContrastBadge">--</span></div><div class="text-swatch-row" id="textColorSuggestions"></div><button class="btn secondary mini full-width" id="btnAutoTextColor" type="button">✦ Chọn màu chữ rõ nhất</button></div><label class="field-label" for="textSize">Cỡ chữ</label><input id="textSize" type="range" min="20" max="240" value="64" /></div></div>
           <div class="property-group"><div class="row-between"><h3>Thứ tự layer</h3><small id="layerCount">0 đối tượng</small></div><div class="layers-list" id="layerList"><div class="empty-layers">Chưa có layer</div></div><div class="layer-actions"><button class="btn small secondary" id="btnLayerUp">↑ Lên trên</button><button class="btn small secondary" id="btnLayerDown">↓ Xuống dưới</button><button class="btn small danger" id="btnDeleteLayer">⌫ Xóa</button></div></div>
           <div class="property-group"><h3>Xuất thành phẩm</h3><select id="exportFormat" class="select"><option value="png">PNG • chất lượng cao</option><option value="jpeg">JPG • chia sẻ</option><option value="webp">WebP • website</option></select><button class="btn primary export-full" id="btnExportAside">↥ Xuất ảnh theo canvas</button><p class="help">Dữ liệu layer lưu dưới dạng .json để tiếp tục chỉnh sửa.</p></div>
         </div>
@@ -73,6 +93,7 @@
     </div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="palette-engine.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

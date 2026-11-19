@@ -1,4 +1,4 @@
-# F&B Product Studio v0.1
+# F&B Product Studio v0.2
 
 **Bản nền tảng hoạt động được** cho studio chỉnh ảnh sản phẩm F&B chạy local trên Windows. Đây chưa phải bản Photoshop/AI Studio đầy đủ, mà là bộ khung dễ học, tự mở rộng từ HTML/CSS/JavaScript + Python.
 
@@ -39,6 +39,13 @@ Mở `http://127.0.0.1:8000/api/health` để xem backend chạy chưa. Quay l�
 - Xuất ảnh PNG/JPEG/WebP; lưu/mở file dự án `.studio.json`.
 - Backend tách nền AI local bằng rembg.
 
+## Chức năng mới ở v0.2 (Palette Engine)
+
+- Trích xuất 5 màu chủ đạo từ ảnh sản phẩm (tự bỏ qua vùng nền trong suốt sau tách nền) bằng phân cụm màu perceptual CIE L\*a\*b\*.
+- Sinh 6 phương án nền Studio động từ màu gốc (Clean Tint, Monochrome, Deep Studio, Analogous, Complementary, Editorial).
+- Thư viện 6 bộ Mood Palettes chuyên ngành F&B (Cà phê rang xay, Matcha & Trà sữa, Trái cây nhiệt đới, Bakery & Kem bơ, Đồ uống mát lạnh, Tối giản sang trọng).
+- Đo độ tương phản WCAG theo thời gian thực khi chỉnh chữ trên nền và gợi ý màu chữ dễ đọc.
+
 ## Chức năng dự kiến các bản tiếp theo (chưa có trong v0.1)
 
 - Vẽ và sửa mask bằng cọ; erase/restore; tóc và kính trong suốt.
@@ -55,7 +62,9 @@ Mở `http://127.0.0.1:8000/api/health` để xem backend chạy chưa. Quay l�
 ```
 index.html                 giao diện và điều khiển
 styles.css                 theme UI
+palette-engine.js          engine trích xuất màu, phối nền Studio & WCAG
 app.js                     canvas, layers, filters, undo, dự án, xuất
+tests/palette-engine.test.js  unit test cho Palette Engine
 assets/demo-binh-giu-nhiet.jpeg
 backend/app.py             FastAPI + rembg local
 backend/requirements.txt  dependencies Python
